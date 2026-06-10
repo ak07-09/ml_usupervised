@@ -52,7 +52,7 @@ with col2:
     st.markdown("<br>", unsafe_allow_html=True)
     r1, r2 = st.columns(2)
     r1.metric("Thrift / Vintage Energy", f"{stats['thrift_energy']:.0f}%")
-    r2.metric("Gorpcore / Utility", f"{stats['gorpcore_utility']:.0f}%")
+    r2.metric("Gorpcore / Utility", f"{stats['gorpcore_utility' ]:.0f}%")
     
     st.markdown("<br>", unsafe_allow_html=True)
     r3, r4 = st.columns(2)
