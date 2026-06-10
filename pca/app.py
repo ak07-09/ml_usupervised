@@ -1,108 +1,60 @@
 import streamlit as st
-from src.predict import run_inference
+from src.predict import run_inverse_inference
 
-st.set_page_config(page_title="NeuroSync AI", page_icon="🧬", layout="centered")
+st.set_page_config(page_title="PCA Inverse Matrix", layout="wide")
 
-with open('style.css') as f:
-    st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
+    
+    .stApp { background-color: #000000; font-family: 'Inter', sans-serif; color: #FFFFFF; }
+    
+    .hero-container { display: flex; align-items: center; justify-content: space-between; background: linear-gradient(135deg, #f97316 0%, #000000 100%); padding: 50px; border-radius: 12px; margin-bottom: 40px; border: 1px solid #ea580c; box-shadow: 0 10px 40px rgba(249, 115, 22, 0.1); }
+    .hero-title { font-size: 4.5rem; font-weight: 900; letter-spacing: -2px; margin: 0; line-height: 1.1; color: #FFFFFF; }
+    .hero-subtitle { font-size: 1.1rem; color: #fdba74; font-weight: 500; margin-top: 15px; }
+    
+    .stSlider label { font-size: 1.1rem !important; font-weight: 700 !important; color: #FFFFFF !important; margin-bottom: 5px; }
+    div[data-testid="stThumbValue"] { font-size: 1rem !important; font-weight: 800 !important; color: #f97316 !important; }
+    .stSlider > div > div > div > div { background-color: #f97316 !important; }
+    
+    .result-card { background-color: #0a0a0a; padding: 40px; border-radius: 8px; border: 1px solid #262626; }
+    
+    div[data-testid="stMetricValue"] { font-size: 2.5rem !important; font-weight: 900 !important; color: #f97316 !important; letter-spacing: -1px; }
+    div[data-testid="stMetricLabel"] { color: #a3a3a3 !important; font-size: 0.9rem !important; font-weight: 700 !important; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+""", unsafe_allow_html=True)
 
 st.markdown("""
 <div class='hero-container'>
     <div class='hero-left'>
-        <div class='hero-title'>Circadian<br>Recovery Engine</div>
-        <div class='hero-desc'>Unlike standard trackers, human recovery isn't black and white. We use Gaussian Mixture Models (GMM) to analyze your biometric data and reveal your exact probabilistic recovery DNA. Discover if your body is optimized, regulated, or trending toward burnout.</div>
-        <div class='scroll-indicator'>SCROLL TO SYNC BIOMETRICS ↓</div>
+        <h1 class='hero-title'>The Lifestyle Architect</h1>
+        <p class='hero-subtitle'>PCA Inverse Matrix. Select the coordinate you want to reach on the mathematical plane. We generate the exact daily routine required to get there.</p>
     </div>
     <div class='hero-right'>
-        <div class='hero-graphic'>🧬</div>
+        <div style="font-size: 6rem;">🔄</div>
     </div>
 </div>
 """, unsafe_allow_html=True)
 
-st.markdown("<div class='input-section-title'>Input Daily Biometrics</div>", unsafe_allow_html=True)
-
-col1, col2 = st.columns(2, gap="large")
+col1, col2 = st.columns([1, 1.2], gap="large")
 
 with col1:
-    sleep_duration = st.number_input("Sleep Duration (Hours)", min_value=2.0, max_value=14.0, value=7.0, step=0.5)
-    sleep_quality = st.slider("Subjective Sleep Quality (1-10)", min_value=1.0, max_value=10.0, value=6.0, step=0.5)
-    physical_activity = st.number_input("Active Minutes", min_value=0.0, max_value=300.0, value=45.0, step=5.0)
+    st.markdown("<h3 style='font-weight: 900; margin-bottom: 20px;'>TARGET YOUR VIBE</h3>", unsafe_allow_html=True)
+    pc1 = st.slider("Intensity Axis (PC1) - [Left = Chill, Right = Tryhard]", -4.0, 4.0, 0.0, 0.1)
+    pc2 = st.slider("Chaos Axis (PC2) - [Left = Organized, Right = Goblin Mode]", -4.0, 4.0, 0.0, 0.1)
 
 with col2:
-    stress_level = st.slider("Subjective Stress Level (1-10)", min_value=1.0, max_value=10.0, value=5.0, step=0.5)
-    heart_rate = st.number_input("Resting Heart Rate (BPM)", min_value=40.0, max_value=120.0, value=72.0, step=1.0)
-
-if st.button("SEQUENCE RECOVERY DNA"):
+    routine = run_inverse_inference(pc1, pc2)
     
-    if sleep_duration <= 4.5 or stress_level >= 8.5 or heart_rate >= 85.0:
-        primary_cluster = 2
-        probabilities = {0: 0.0, 1: 0.02, 2: 0.98}
-        
-    elif sleep_duration >= 7.5 and stress_level <= 4.0 and heart_rate <= 65.0:
-        primary_cluster = 0
-        probabilities = {0: 0.95, 1: 0.05, 2: 0.0}
-        
-    else:
-        user_data = {
-            'Sleep Duration': sleep_duration,
-            'Quality of Sleep': sleep_quality,
-            'Physical Activity Level': physical_activity,
-            'Stress Level': stress_level,
-            'Heart Rate': heart_rate
-        }
-        primary_cluster, probabilities = run_inference(user_data)
+    html_str = f"<div style='background: linear-gradient(180deg, #f97316 0%, #000000 100%); padding: 2px; border-radius: 10px;'><div class='result-card'><div style='color: #FFFFFF; font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px;'>Required Daily Protocol</div></div></div>"
+    st.markdown(html_str, unsafe_allow_html=True)
     
-    archetypes = {
-        0: {
-            "title": "THE OPTIMIZED BIOHACKER",
-            "state": "Peak Neural & Physical Recovery",
-            "desc": "Your biometrics indicate a highly regulated nervous system. High sleep efficiency paired with low systemic stress. Your body is primed for high-intensity cognitive and physical load.",
-            "css": "cluster-opt"
-        },
-        1: {
-            "title": "THE REGULATED BASELINE",
-            "state": "Standard Operational Capacity",
-            "desc": "You are maintaining equilibrium. While not perfectly optimized, your sleep and stress ratios are within sustainable human limits. Avoid compounding stress without increasing recovery time.",
-            "css": "cluster-base"
-        },
-        2: {
-            "title": "THE BURNOUT RISK",
-            "state": "Severe Systemic Fatigue",
-            "desc": "Critical warning. Elevated resting heart rates combined with high stress and sleep deprivation point to central nervous system exhaustion. Prioritize immediate deep rest.",
-            "css": "cluster-burn"
-        }
-    }
+    st.markdown("<br>", unsafe_allow_html=True)
+    r1, r2 = st.columns(2)
+    r1.metric("Doomscrolling", f"{routine['doomscroll_hrs']:.1f} Hrs")
+    r2.metric("Deep Focus", f"{routine['deep_focus_hrs']:.1f} Hrs")
     
-    result = archetypes[primary_cluster]
-    
-    p_opt = probabilities[0] * 100
-    p_base = probabilities[1] * 100
-    p_burn = probabilities[2] * 100
-    
-    html_content = f"""
-<div class='result-card {result["css"]}'>
-<div class='result-label'>PRIMARY STATE DETECTED</div>
-<div class='result-title'>{result["title"]}</div>
-<div class='result-role'>PHYSIOLOGICAL STATE: {result["state"]}</div>
-<div class='result-desc'>{result["desc"]}</div>
-<div class='prob-container'>
-<div class='prob-title'>YOUR RECOVERY DNA MIX (GMM PROBABILITIES)</div>
-<div class='prob-row'>
-<div class='prob-label'>Optimized</div>
-<div class='prob-bar-bg'><div class='prob-bar bar-opt' style='width: {p_opt}%'></div></div>
-<div class='prob-value'>{p_opt:.1f}%</div>
-</div>
-<div class='prob-row'>
-<div class='prob-label'>Baseline</div>
-<div class='prob-bar-bg'><div class='prob-bar bar-base' style='width: {p_base}%'></div></div>
-<div class='prob-value'>{p_base:.1f}%</div>
-</div>
-<div class='prob-row'>
-<div class='prob-label'>Burnout</div>
-<div class='prob-bar-bg'><div class='prob-bar bar-burn' style='width: {p_burn}%'></div></div>
-<div class='prob-value'>{p_burn:.1f}%</div>
-</div>
-</div>
-</div>
-"""
-    st.markdown(html_content, unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    r3, r4 = st.columns(2)
+    r3.metric("Caffeine Intake", f"{routine['caffeine_mg']:.0f} mg")
+    r4.metric("Touching Grass", f"{routine['touch_grass_mins']:.0f} Mins")

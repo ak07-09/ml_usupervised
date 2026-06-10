@@ -1,26 +1,23 @@
 import pickle
-import pandas as pd
+import numpy as np
 import os
 
 def load_artifacts():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    pipeline_path = os.path.join(base_dir, 'models', 'recovery_gmm_artifacts.pkl')
-    with open(pipeline_path, 'rb') as f:
+    with open(os.path.join(base_dir, 'models', 'pca_inverse_artifacts.pkl'), 'rb') as f:
         return pickle.load(f)
 
-def run_inference(input_dict):
+def run_inverse_inference(target_pc1, target_pc2):
     artifacts = load_artifacts()
-    df_input = pd.DataFrame([input_dict])
     
-    X_scaled = artifacts['scaler'].transform(df_input)
-    raw_probs = artifacts['gmm'].predict_proba(X_scaled)[0]
+    target_coords = np.array([[target_pc1, target_pc2]])
+    scaled_reconstruction = artifacts['pca'].inverse_transform(target_coords)
+    real_world_stats = artifacts['scaler'].inverse_transform(scaled_reconstruction)[0]
+    real_world_stats = np.clip(real_world_stats, 0, None)
     
-    # Reroute the raw probabilities to the correct UI buckets
-    mapped_probs = {0: 0.0, 1: 0.0, 2: 0.0}
-    for raw_id, fixed_id in artifacts['mapping'].items():
-        mapped_probs[fixed_id] = raw_probs[raw_id]
-        
-    # Select the highest probability from the corrected mapping
-    primary_cluster = max(mapped_probs, key=mapped_probs.get)
-    
-    return int(primary_cluster), mapped_probs
+    return {
+        'doomscroll_hrs': real_world_stats[0],
+        'caffeine_mg': real_world_stats[1],
+        'touch_grass_mins': real_world_stats[2],
+        'deep_focus_hrs': real_world_stats[3]
+    }
