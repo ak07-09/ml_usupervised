@@ -57,18 +57,8 @@ with col2:
         
         c1_p, c2_p, c3_p = probs[0]*100, probs[1]*100, probs[2]*100
         
-        html_str = f"""
-        <div class='result-card'>
-            <h2 style='margin-top: 0; font-weight: 900; font-size: 2.2rem; margin-bottom: 35px; letter-spacing: -1px;'>GMM Cluster Overlap</h2>
-            
-            <div class='stat-label'><span>The Main Character (High Aura/Delusion)</span><span style='color: #ec4899;'>{c1_p:.1f}%</span></div>
-            <div class='prob-bar-container'><div class='prob-bar' style='width: {c1_p:.1f}%; background: linear-gradient(90deg, #be185d 0%, #ec4899 100%);'></div></div>
-            
-            <div class='stat-label'><span>The Mysterious Local (High Lore)</span><span style='color: #a855f7;'>{c2_p:.1f}%</span></div>
-            <div class='prob-bar-container'><div class='prob-bar' style='width: {c2_p:.1f}%; background: linear-gradient(90deg, #7e22ce 0%, #a855f7 100%);'></div></div>
-            
-            <div class='stat-label'><span>The NPC (Balanced)</span><span style='color: #06b6d4;'>{c3_p:.1f}%</span></div>
-            <div class='prob-bar-container'><div class='prob-bar' style='width: {c3_p:.1f}%; background: linear-gradient(90deg, #0369a1 0%, #06b6d4 100%);'></div></div>
-        </div>
-        """
+        # SLEDGEHAMMER FIX: The entire HTML string is now forced onto ONE single line. 
+        # Streamlit cannot indent this or treat it as a code block.
+        html_str = f"<div class='result-card'><h2 style='margin-top: 0; font-weight: 900; font-size: 2.2rem; margin-bottom: 35px; letter-spacing: -1px;'>GMM Cluster Overlap</h2><div class='stat-label'><span>The Main Character (High Aura/Delusion)</span><span style='color: #ec4899;'>{c1_p:.1f}%</span></div><div class='prob-bar-container'><div class='prob-bar' style='width: {c1_p:.1f}%; background: linear-gradient(90deg, #be185d 0%, #ec4899 100%);'></div></div><div class='stat-label'><span>The Mysterious Local (High Lore)</span><span style='color: #a855f7;'>{c2_p:.1f}%</span></div><div class='prob-bar-container'><div class='prob-bar' style='width: {c2_p:.1f}%; background: linear-gradient(90deg, #7e22ce 0%, #a855f7 100%);'></div></div><div class='stat-label'><span>The NPC (Balanced)</span><span style='color: #06b6d4;'>{c3_p:.1f}%</span></div><div class='prob-bar-container'><div class='prob-bar' style='width: {c3_p:.1f}%; background: linear-gradient(90deg, #0369a1 0%, #06b6d4 100%);'></div></div></div>"
+        
         st.markdown(html_str, unsafe_allow_html=True)
